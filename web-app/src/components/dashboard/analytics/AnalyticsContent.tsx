@@ -5,7 +5,7 @@ import RangeTabs from "@/components/dashboard/analytics/RangeTabs";
 import RevenueAreaChart from "@/components/dashboard/analytics/RevenueAreaChart";
 import TopProducts from "@/components/dashboard/analytics/TopProducts";
 import TrafficSources from "@/components/dashboard/analytics/TrafficSources";
-import StatCard from "@/components/dashboard/StatCard";
+import StatCard from "@/components/dashboard/global/StatCard";
 import { RANGE_DATA, TOP_PRODUCTS, TRAFFIC } from "@/lib/utils/constants";
 import { useState } from "react";
 

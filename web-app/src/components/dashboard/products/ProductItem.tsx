@@ -1,10 +1,11 @@
 import { STATUS_STYLE_PRODUCT } from "@/lib/utils/constants";
 import { ProductType } from "@/types/productType";
+import Image from "next/image";
 
 export default function ProductItem({
   id,
   name,
-  image,
+  images,
   price,
   sales,
   status,
@@ -13,9 +14,15 @@ export default function ProductItem({
     <tr key={id} className={"hover:bg-white/2 transition-colors"}>
       <td className="px-4 py-3.5">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/5 text-lg">
-            {image}
-          </div>
+          {/* <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/5 text-lg">
+            {}
+          </div> */}
+          <Image 
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/5 text-lg"
+          width={9}
+          height={9}
+          src={images[0]} 
+          alt={name} />
           <span className="font-medium text-white">{name}</span>
         </div>
       </td>

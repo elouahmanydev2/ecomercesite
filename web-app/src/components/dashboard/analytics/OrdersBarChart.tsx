@@ -1,5 +1,5 @@
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import Card from "../Card";
+import Card from "../global/Card";
 import CustomTooltip from "@/components/global/CustomTooltip";
 import { rangeDataType } from "@/types/orderType";
 
