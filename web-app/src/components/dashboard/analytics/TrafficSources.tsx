@@ -1,5 +1,5 @@
 import { trafficType } from "@/types/trafficType";
-import Card from "../Card";
+import Card from "../global/Card";
 
 interface TrafficProps {
     T:trafficType[]

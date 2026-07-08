@@ -1,8 +1,8 @@
 "use client";
 
-import Field from "@/components/dashboard/Field";
+import Field from "@/components/dashboard/global/Field";
 import SectionSetting from "@/components/dashboard/settings/SectionSetting";
-import Toggle from "@/components/dashboard/Toggle";
+import Toggle from "@/components/dashboard/global/Toggle";
 import DeleteStoreBtn from "./DeleteStoreBtn";
 import Save from "./Save";
 

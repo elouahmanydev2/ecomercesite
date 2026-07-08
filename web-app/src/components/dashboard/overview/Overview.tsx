@@ -1,9 +1,31 @@
-import { ACTIONS, ALL_ORDERS} from "@/lib/utils/constants";
+//
+'use client'
+import { ACTIONS } from "@/lib/utils/constants";
 import Link from "next/link";
-import StatCard from "../StatCard";
+import StatCard from "../global/StatCard";
 import OrderItem from "../orders/OrderItem";
+import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
+import { useEffect, useMemo } from "react";
+import { fetchOrders } from "@/lib/features/orders/thunks/ordersThunks";
+import { OrderStatus } from "@/generated/prisma/enums";
+import { fetchDashboard } from "@/lib/features/dashboard/thunks/dashboardThunks";
 
 export default function Overview() {
+
+  const dispatch = useAppDispatch();
+
+  const {
+    revenue,
+    orderCount,
+    productCount,
+    recentOrders,
+    pending,
+  } = useAppSelector((state) => state.dashboard.dashboard);
+
+  useEffect(() => {
+    dispatch(fetchDashboard());
+  }, [dispatch]);
+
   return (
     <div className="space-y-8 max-w-5xl">
 
@@ -15,10 +37,10 @@ export default function Overview() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <StatCard label="Revenue" value="$1,248" change="12%" positive />
-        <StatCard label="Orders" value="34" change="8%" positive />
-        <StatCard label="Products" value="12" change="2%" positive />
-        <StatCard label="Store visits" value="892" change="3%" positive={false} />
+
+        <StatCard label="Revenue" value={revenue.toFixed(2)} change={""} positive={false} />
+        <StatCard label="Orders" value={orderCount} change={""} positive={false} />
+        <StatCard label="Products" value={productCount} change={""} positive={false} />
       </div>
 
       {/* Quick actions */}
@@ -59,17 +81,16 @@ export default function Overview() {
               </tr>
             </thead>
             <tbody>
-              {ALL_ORDERS.slice(0,6).map((o)=>(
-              <OrderItem 
-                key={o.id}
-                id={o.id} 
-                customer={o.customer} 
-                product={o.product} 
-                amount={o.amount} 
-                status={o.status}  />
-              ))
+              {pending ? <><tr><td>loading..</td></tr></> :
+                recentOrders
+                .map(({ createdAt, ...order }) => (
+                  <OrderItem
+                    key={order.id}
+                    order={order}
+                  />
+                ))
+                }
 
-              }
             </tbody>
           </table>
         </div>

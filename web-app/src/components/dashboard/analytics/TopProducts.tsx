@@ -1,5 +1,5 @@
 import { TopProductType } from "@/types/productType";
-import Card from "../Card";
+import Card from "../global/Card";
 
 interface TopProductsProps {
   topproducts:TopProductType[]

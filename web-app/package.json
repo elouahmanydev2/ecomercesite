@@ -9,12 +9,17 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
     "@reduxjs/toolkit": "^2.12.0",
+    "dotenv": "^17.4.2",
     "next": "16.2.9",
+    "pg": "^8.22.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-redux": "^9.3.0",
-    "recharts": "^3.9.0"
+    "recharts": "^3.9.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -26,11 +31,14 @@
     "eslint-config-next": "16.2.9",
     "prisma": "^7.8.0",
     "tailwindcss": "^4",
-    "tsx": "^4.22.4",
+    "tsx": "^4.22.5",
     "typescript": "^5"
   },
   "allowScripts": {
     "unrs-resolver@1.12.2": true,
-    "sharp@0.34.5": true
+    "sharp@0.34.5": true,
+    "@prisma/engines@7.8.0": true,
+    "esbuild@0.28.1": true,
+    "prisma@7.8.0": true
   }
 }

@@ -1,11 +1,18 @@
+import { OrderStatus } from "@/generated/prisma/enums";
+
 export type orderType = {
     id: string;
     customer: string;
     email?: string;
-    product: string;
-    amount: string;
-    status: string;
-    date?: string;
+    amount: number;
+    status: OrderStatus;
+    createdAt?: string;
+
+  product: {
+    id: string;
+    name: string;
+    images: string[];
+  };
 }
 
 export type rangeDataType={

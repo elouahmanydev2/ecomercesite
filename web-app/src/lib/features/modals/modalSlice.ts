@@ -1,21 +1,21 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface State {
-    isAddProductModalOpen:boolean;
+    isProductModalOpen:boolean;
 
 }
 const initialState:State = {
-    isAddProductModalOpen: false
+    isProductModalOpen: false
 }
 const modalSlice = createSlice({
     name: "modal",
     initialState,
     reducers:{
-        setAddProductModal (state,action:PayloadAction<boolean>){
-            state.isAddProductModalOpen = action.payload
+        setProductModal (state,action:PayloadAction<boolean>){
+            state.isProductModalOpen = action.payload
         }
     }
 })
 
-export const {setAddProductModal} =modalSlice.actions
+export const {setProductModal} =modalSlice.actions
 export default  modalSlice.reducer;

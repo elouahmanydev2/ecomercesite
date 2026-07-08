@@ -1,30 +1,37 @@
-import { PagePath, STATUS_STYLE } from "@/lib/utils/constants";
+import {ORDER_STATUS_STYLE} from "@/lib/utils/constants";
 import { orderType } from "@/types/orderType";
 
 
-export default function OrderItem({id,customer,email,product,amount,status,date}:orderType) {
+interface OrderProps{
+  order:orderType,
+
+}
+
+export default function OrderItem({order}:OrderProps) {
+  
+  if (!order) return null
   return (
     <tr
-      key={id}
+      key={order.id}
       className={`hover:bg-white/2 transition-colors`}
       style={{ borderColor: "rgba(255,255,255,0.05)" }}
     >
-      <td className="px-4 py-3 font-mono text-xs text-white/50">{id}</td>
+      <td className="px-4 py-3 font-mono text-xs text-white/50">#{order.id.slice(9)}</td>
       <td className="px-4 py-3.5">
-        {customer && <p className="text-white/85 font-medium">{customer}</p>}
-        {email &&  <p className="text-xs text-white/30">{email}</p>}                 
+        {order.customer && <p className="text-white/85 font-medium">{order.customer}</p>}
+        {order.email &&  <p className="text-xs text-white/30">{order.email}</p>}                 
        </td> 
-      {product && <td className="hidden sm:table-cell px-4 py-3 text-white/50">
-        {product}
+      {order.product.name && <td className="hidden sm:table-cell px-4 py-3 text-white/50">
+        {order.product.name}
       </td>}
-      {date && <td className="hidden sm:table-cell px-4 py-3.5 text-white/40 text-xs">{date}</td>}
-      {amount && <td className="px-4 py-3 font-medium text-white">{amount}</td>}
+      {order.createdAt && <td className="hidden sm:table-cell px-4 py-3.5 text-white/40 text-xs">{order.createdAt}</td>}
+      {order.amount && <td className="px-4 py-3 font-medium text-white">{order.amount}</td>}
       
-      {status && <td className="px-4 py-3">
+      {order.status && <td className="px-4 py-3">
         <span
-          className={`inline-flex rounded-full border px-2 py-0.5 text-[11px] font-medium ${STATUS_STYLE[status as PagePath]}`}
+          className={`inline-flex rounded-full border px-2 py-0.5 text-[11px] font-medium ${ORDER_STATUS_STYLE[order.status]}`}
         >
-          {status}
+          {order.status}
         </span>
       </td>}
       
