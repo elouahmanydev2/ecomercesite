@@ -1,10 +1,9 @@
 "use client";
 
-import AddProductModal from "@/components/modals/AddProductModal";
 import { useEffect, useState } from "react";
 import ProductItem from "./ProductItem";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
-import { setProductModal } from "@/lib/features/modals/modalSlice";
+import { setAddProductModal } from "@/lib/features/modals/modalSlice";
 import { fetchProducts } from "@/lib/features/products/thunks/productsThunks";
 import ProductModal from "@/components/modals/ProductModal";
 
@@ -13,7 +12,7 @@ import ProductModal from "@/components/modals/ProductModal";
 
 export default function ProductsContent() {
   const [filter, setFilter] = useState("All");
-  const { isProductModalOpen } = useAppSelector(s => s.modal)
+  const { isAddProductModalOpen } = useAppSelector(s => s.modal)
   const dispatch = useAppDispatch();
   const { products, pending, error } = useAppSelector((state) => state.products);
 
@@ -28,8 +27,8 @@ export default function ProductsContent() {
 
   return (
     <div className="max-w-5xl space-y-6">
-      {isProductModalOpen && <ProductModal
-        onClose={() => dispatch(setProductModal(false))}/>}
+      {isAddProductModalOpen && <ProductModal
+        onClose={() => dispatch(setAddProductModal(false))}/>}
 
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -38,7 +37,7 @@ export default function ProductsContent() {
           <p className="mt-0.5 text-sm text-white/40">{products.length} products in your store</p>
         </div>
         <button
-          onClick={() => dispatch(setProductModal(true))}
+          onClick={() => dispatch(setAddProductModal(true))}
           className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-700 transition-colors"
         >
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
@@ -86,7 +85,10 @@ export default function ProductsContent() {
                 price={p.price}
                 sales={p.sales}
                 status={p.status}
-                images={p.images} />
+                images={p.images} 
+                thumbnail={p.thumbnail} 
+                stock={p.stock} 
+                />
             ))}
           </tbody>
         </table>
@@ -94,7 +96,7 @@ export default function ProductsContent() {
         {filtered.length === 0 && (
           <div className="py-16 text-center">
             <p className="text-sm text-white/30">No {filter.toLowerCase()} products yet.</p>
-            <button onClick={() => dispatch(setProductModal(true))} className="mt-3 dispatch(setAddProductModal(false))text-xs text-violet-400 hover:text-violet-300 transition-colors">
+            <button onClick={() => dispatch(setAddProductModal(true))} className="mt-3 dispatch(setAddProductModal(false))text-xs text-violet-400 hover:text-violet-300 transition-colors">
               Add your first product →
             </button>
           </div>
