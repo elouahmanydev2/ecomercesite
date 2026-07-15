@@ -16,8 +16,10 @@ model Product {
   id        String   @id @default(cuid())
   name   String
   images String[]      
+  thumbnail Int @default(0)
   price  Float        
-  sales  Int          
+  sales  Int    
+  stock Int      
   status ProductStatus @default(Draft)
   updatedAt DateTime @default(now())
   createdAt DateTime @default(now())

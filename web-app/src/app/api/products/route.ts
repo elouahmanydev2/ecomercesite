@@ -1,18 +1,9 @@
+import cloudinary from "@/lib/cloudinary";
 import prisma from "@/lib/prisma";
+import { ProductSchema } from "@/types/productType";
 import { NextResponse } from "next/server";
-import z from "zod";
 
-
-// Zod Schema to validate incoming POST request data
-const CreateProductSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  images: z.array(z.string().url("Each image must be a valid URL")),
-  price: z.number().positive("Price must be a positive number"),
-  sales: z.number().int().nonnegative("Sales must be a non-negative integer"),
-  status: z.enum(["Active", "Draft"]).optional(),
-});
-
-// 1. GET ALL PRODUCTS (Public or Private depending on your needs)
+// GET ALL PRODUCTS (Public or Private depending on your needs)
 export async function GET() {
   try {
     const products = await prisma.product.findMany({
@@ -24,26 +15,63 @@ export async function GET() {
   }
 }
 
-// 2. CREATE A PRODUCT (Secure/Protected)
+// CREATE A PRODUCT (Secure/Protected)
 export async function POST(request: Request) {
   try {
-    // 🔐 AUTHENTICATION GUARD PLACEHOLDER
-    // const session = await auth(); if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const formData = await request.formData();
 
-    const body = await request.json();
-    
-    // Validate the input data against the schema (Prevents SQL injection/bad data)
-    const validation = CreateProductSchema.safeParse(body);
+    const name = formData.get("name") as string;
+    const price = formData.get("price");
+    const stock = formData.get("stock");
+    const status = formData.get("status"); // Leave it as a raw string ("Draft" or "Active")
+    const files = formData.getAll("files") as File[];
+
+
+    if (!files || files.length === 0) {
+      return NextResponse.json({ errors: "No images provided" }, { status: 400 });
+    }
+
+    // 1. Uploading images
+    const urls = await Promise.all(
+      files.map(async (file) => {
+        const buffer = Buffer.from(await file.arrayBuffer());
+        return new Promise<string>((resolve, reject) => {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            { folder: "products" },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result!.secure_url);
+            }
+          );
+          uploadStream.end(buffer);
+        });
+      })
+    );
+    // Validate with Zod
+    const validation = ProductSchema.safeParse({
+      name,
+      price,
+      stock,
+      status,
+      images: urls,
+      thumbnail: 0,
+      sales: 0
+    });
+
+    // CRITICAL: If validation fails, log it to terminal so you see EXACTLY which field broke
     if (!validation.success) {
+      console.error("❌ ZOD VALIDATION FAILED:", validation.error.flatten());
       return NextResponse.json({ errors: validation.error.format() }, { status: 400 });
     }
 
+    // 3. Create product in DB
     const newProduct = await prisma.product.create({
       data: validation.data,
     });
 
     return NextResponse.json(newProduct, { status: 201 });
   } catch (error) {
+    console.error("Product creation error:", error);
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
   }
 }
