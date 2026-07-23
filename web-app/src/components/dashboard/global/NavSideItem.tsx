@@ -10,7 +10,7 @@ interface NAProps{
     onClose:()=>void
 
 }
-export function NavSideItem({href,active,Icon,label,pending,newOrdersCount,onClose}:NAProps) {
+export function NavSideItem({href,active,Icon,label,newOrdersCount,pending,onClose}:NAProps) {
     return(
         <Link
                 key={href}
@@ -27,7 +27,7 @@ export function NavSideItem({href,active,Icon,label,pending,newOrdersCount,onClo
                 {label}
                 {label === "Orders" && (
                   <span className="ml-auto rounded-full bg-violet-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-violet-300">
-                    {pending ? '' : newOrdersCount}
+                    {pending ? <></>: <> {newOrdersCount}</>}
                   </span>
                 )}
               </Link>

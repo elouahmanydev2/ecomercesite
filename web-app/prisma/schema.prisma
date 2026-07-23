@@ -24,20 +24,27 @@ model Product {
   updatedAt DateTime @default(now())
   createdAt DateTime @default(now())
 
-  orders    Order[]
+ orderItems  OrderItem[]
 
+  @@map("products")
 }
 
 model Order {
   id         String      @id @default(cuid())
   customer   String
   email      String?
+  phone      String?
+  address    String?
   amount     Float
   status     OrderStatus @default(PENDING)
-  createdAt  DateTime    @default(now())
+  note      String?
 
-  productId  String
-  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  items             OrderItem[]
+
+  @@map("orders")
 }
 
 enum ProductStatus {
@@ -46,8 +53,22 @@ enum ProductStatus {
 }
 enum OrderStatus {
   PENDING
-  PAID
   SHIPPED
   DELIVERED
+  PAID
   CANCELLED
+}
+
+model OrderItem {
+  id         String  @id @default(cuid())
+  priceCents Int     // snapshot price at time of purchase
+  quantity   Int     @default(1)
+
+  orderId    String
+  order      Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId  String
+  product    Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
 }

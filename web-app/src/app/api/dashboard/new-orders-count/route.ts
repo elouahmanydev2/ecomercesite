@@ -11,7 +11,9 @@ export async function GET() {
     });
 
     return NextResponse.json(newOrderCount);
-  } catch {
+  } catch (error) {
+    console.error("Failed to fetch new orders count:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch orders" },
       { status: 500 }

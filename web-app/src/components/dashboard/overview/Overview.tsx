@@ -75,19 +75,19 @@ export default function Overview() {
               <tr className="border-b border-white/5 text-left">
                 <th className="px-4 py-3 text-xs font-medium text-white/30">Order</th>
                 <th className="px-4 py-3 text-xs font-medium text-white/30">Customer</th>
-                <th className="hidden sm:table-cell px-4 py-3 text-xs font-medium text-white/30">Product</th>
                 <th className="px-4 py-3 text-xs font-medium text-white/30">Amount</th>
+                <th className="px-4 py-3 text-xs font-medium text-white/30">Date</th>
                 <th className="px-4 py-3 text-xs font-medium text-white/30">Status</th>
               </tr>
             </thead>
             <tbody>
               {pending ? <><tr><td>loading..</td></tr></> :
                 recentOrders
-                .map(({ createdAt, ...order }) => (
+                .map((order ) => (
                   <OrderItem
                     key={order.id}
-                    order={order}
-                  />
+                    order={order}       
+                   />
                 ))
                 }
 

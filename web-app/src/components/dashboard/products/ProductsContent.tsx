@@ -24,6 +24,7 @@ export default function ProductsContent() {
   if (error) return <p>Error: {error}</p>;
 
   const filtered = filter === "All" ? products : products.filter((p) => p.status === filter);
+console.log(products);
 
   return (
     <div className="max-w-5xl space-y-6">

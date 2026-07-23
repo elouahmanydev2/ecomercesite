@@ -4,7 +4,7 @@ export interface DashboardResponse {
   revenue: number;
   orderCount: number;
   productCount: number;
-  recentOrders: any[]; // we'll replace "any" with your orderType later
+  recentOrders: any[]; 
 }
 
 export const fetchDashboard = createAsyncThunk<
