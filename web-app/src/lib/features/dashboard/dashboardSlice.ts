@@ -1,11 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { fetchDashboard } from "./thunks/dashboardThunks";
+import { OrderType } from "@/types/orderType";
 
 interface DashboardState {
   revenue: number;
   orderCount: number;
   productCount: number;
-  recentOrders: any[];
+  recentOrders: OrderType[];
 
   pending: boolean;
   error: string | null;

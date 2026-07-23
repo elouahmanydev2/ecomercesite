@@ -1,29 +1,35 @@
 import { BoxIcon, ChartIcon, CloseIcon, GearIcon, HomeIcon, LinkIcon, ReceiptIcon } from "@/components/icons";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
-import { fetchNewOrderCount } from "@/lib/features/orders/thunks/ordersThunks";
+// import { fetchNewOrderCount } from "@/lib/features/orders/thunks/ordersThunks";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { NavSideItem } from "./NavSideItem";
+import { fetchNewOrderCount } from "@/lib/features/dashboard/sidebar/sideBarSlice";
 
 const NAV = [
-  { label: "Overview",  href: "/dashboard",           icon: HomeIcon },
-  { label: "Products",  href: "/dashboard/products",  icon: BoxIcon },
-  { label: "Orders",    href: "/dashboard/orders",    icon: ReceiptIcon },
+  { label: "Overview", href: "/dashboard", icon: HomeIcon },
+  { label: "Products", href: "/dashboard/products", icon: BoxIcon },
+  { label: "Orders", href: "/dashboard/orders", icon: ReceiptIcon },
   { label: "Analytics", href: "/dashboard/analytics", icon: ChartIcon },
-  { label: "Settings",  href: "/dashboard/settings",  icon: GearIcon },
+  { label: "Settings", href: "/dashboard/settings", icon: GearIcon },
 ];
 
 // ─── Sidebar ─────────────────────────────────────────────────────────────────
 
-export function Sidebar({ open, onClose }:any) {
-    const dispatch = useAppDispatch()
-    const {countLoading ,newOrdersCount} = useAppSelector(state => state.dashboard.orders);
+export function Sidebar({ open, onClose }: any) {
+  const dispatch = useAppDispatch()
+  const { newOrdersCount, pending } = useAppSelector(state => state.dashboard.sidebar);
   const pathname = usePathname();
 
-  useEffect(()=>{
-    dispatch(fetchNewOrderCount())
-  },[dispatch])
+  useEffect(() => {
+    dispatch(fetchNewOrderCount());
+    const interval = setInterval(() => {
+      dispatch(fetchNewOrderCount());
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [dispatch])
   return (
     <>
       {/* Mobile backdrop */}
@@ -48,7 +54,7 @@ export function Sidebar({ open, onClose }:any) {
             link<span className="text-violet-400">store</span>
           </Link>
           <button onClick={onClose} className="text-white/40 hover:text-white lg:hidden">
-            <CloseIcon size={14}/>
+            <CloseIcon size={14} />
           </button>
         </div>
 
@@ -65,15 +71,15 @@ export function Sidebar({ open, onClose }:any) {
           {NAV.map(({ label, href, icon: Icon }) => {
             const active = pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
             return (
-              <NavSideItem 
-              key={href}
-              href={href} 
-              active={active} 
-              Icon={Icon} 
-              label={label} 
-              pending={countLoading} 
-              newOrdersCount={newOrdersCount ?? 0} 
-              onClose={onClose} />
+              <NavSideItem
+                key={href}
+                href={href}
+                active={active}
+                Icon={Icon}
+                label={label}
+                pending={pending}
+                newOrdersCount={newOrdersCount ?? 0}
+                onClose={onClose} />
             );
           })}
         </nav>

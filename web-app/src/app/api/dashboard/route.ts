@@ -21,11 +21,16 @@ export async function GET() {
 
         prisma.order.findMany({
           take: 6,
+          where:{status:OrderStatus.PENDING},
           orderBy: {
             createdAt: "desc",
           },
           include: {
-            product: true,
+            items:{
+              include:{
+                product:true
+              }
+            }
           },
         }),
       ]);

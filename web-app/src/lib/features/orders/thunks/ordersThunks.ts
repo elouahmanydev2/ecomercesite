@@ -1,44 +1,139 @@
-import { orderType } from "@/types/orderType";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { OrderType } from "@/types/orderType";
+import { OrderStatus } from "@/generated/prisma/enums";
 
-// 1. Fetch All Products
-export const fetchOrders = createAsyncThunk<orderType[], void, { rejectValue: string }>(
-  'orders/fetchAll',
+/**
+ * GET ALL ORDERS
+ */
+export const fetchOrders = createAsyncThunk(
+  "orders/fetchOrders",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch('/api/orders');
-      if (!response.ok) throw new Error('Failed to fetch products');
-      return await response.json();
-      
-    } catch (err) {
-      return rejectWithValue(`Something went wrong ${err}`);
+      const res = await fetch("/api/orders");
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch orders");
+      }
+
+      return await res.json();
+    } catch (error) {
+      return rejectWithValue(
+        error instanceof Error ? error.message : "Something went wrong"
+      );
     }
   }
 );
 
-// 2. Fetch New order couter
-export const fetchNewOrderCount = createAsyncThunk<
-  number,
-  void,
-  { rejectValue: string }
->(
-  "dashboard/fetchNewOrderCount",
-  async (_, { rejectWithValue }) => {
+/**
+ * GET SINGLE ORDER
+ */
+export const fetchOrder = createAsyncThunk(
+  "orders/fetchOrder",
+  async (id: string, { rejectWithValue }) => {
     try {
-      const res = await fetch("/api/dashboard/new-orders-count");
-
-      const data = await res.json();
+      const res = await fetch(`/api/orders/${id}`);
 
       if (!res.ok) {
-        return rejectWithValue(data.error ?? "Failed to fetch new order count");
+        throw new Error("Failed to fetch order");
       }
 
-      console.log(data);
-
-      return data;
-    } catch (err) {
+      return await res.json();
+    } catch (error) {
       return rejectWithValue(
-        err instanceof Error ? err.message : "Unknown error"
+        error instanceof Error ? error.message : "Something went wrong"
+      );
+    }
+  }
+);
+
+/**
+ * CREATE ORDER
+ */
+export const createOrder = createAsyncThunk(
+  "orders/createOrder",
+  async (data: OrderType, { rejectWithValue }) => {
+    try {
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        return rejectWithValue(result);
+      }
+
+      return result;
+    } catch (error) {
+      return rejectWithValue(
+        error instanceof Error ? error.message : "Something went wrong"
+      );
+    }
+  }
+);
+
+/**
+ * UPDATE ORDER
+ */
+export const updateOrder = createAsyncThunk(
+  "orders/updateOrder",
+  async (
+    {
+      id,
+      status,
+    }: {
+      id: string;
+      status: OrderStatus;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const res = await fetch(`/api/orders/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({status}),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        return rejectWithValue(result);
+      }
+
+      return result;
+    } catch (error) {
+      return rejectWithValue(
+        error instanceof Error ? error.message : "Something went wrong"
+      );
+    }
+  }
+);
+
+/**
+ * DELETE ORDER
+ */
+export const deleteOrder = createAsyncThunk(
+  "orders/deleteOrder",
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const res = await fetch(`/api/orders/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to delete order");
+      }
+
+      return id;
+    } catch (error) {
+      return rejectWithValue(
+        error instanceof Error ? error.message : "Something went wrong"
       );
     }
   }
