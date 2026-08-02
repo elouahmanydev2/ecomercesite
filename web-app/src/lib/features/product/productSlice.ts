@@ -104,28 +104,6 @@ const productSlice = createSlice({
         state.error = action.payload ?? "Failed to update product";
       });
 
-    /* ==========================
-       DELETE PRODUCT
-    ========================== */
-
-    builder
-      .addCase(deleteProduct.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-        state.success = false;
-      })
-
-      .addCase(deleteProduct.fulfilled, (state) => {
-        state.loading = false;
-        state.product = null;
-        state.success = true;
-      })
-
-      .addCase(deleteProduct.rejected, (state, action) => {
-        state.loading = false;
-        state.success = false;
-        state.error = action.payload ?? "Failed to delete product";
-      });
   },
 });
 

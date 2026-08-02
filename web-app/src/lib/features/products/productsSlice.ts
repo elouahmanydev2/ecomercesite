@@ -4,23 +4,23 @@ import { fetchProducts } from "./thunks/productsThunks";
 import { deleteProduct } from "../product/thunks/productThunk";
 
 interface State {
-    products:ProductType[];
-    pending:boolean;
-    error:string | null
+  products: ProductType[];
+  pending: boolean;
+  error: string | null
 }
 
-const initialState:State ={
-    products: [],
-    pending: false,
-    error: null
+const initialState: State = {
+  products: [],
+  pending: false,
+  error: null
 }
-const productsSlice =createSlice({
-    name: "products",
-    initialState,
-    reducers:{},
-    extraReducers(builder) {
-        builder
-        // --- Fetch Products ---
+const productsSlice = createSlice({
+  name: "products",
+  initialState,
+  reducers: {},
+  extraReducers(builder) {
+    builder
+      // --- Fetch Products ---
       .addCase(fetchProducts.pending, (state) => {
         state.pending = true;
         state.error = null;
@@ -34,19 +34,19 @@ const productsSlice =createSlice({
         state.error = action.payload || 'Failed to load products';
       })
       //delete a Product
-      .addCase(deleteProduct.pending ,(state)=>{
-        state.pending =true;
+      .addCase(deleteProduct.pending, (state) => {
+        state.pending = true;
         state.error = null;
       })
-      .addCase(deleteProduct.fulfilled,(state,action:PayloadAction<string>)=>{
-        state.pending = true;
-        state.products = state.products.filter(p => p.id === action.payload) 
+      .addCase(deleteProduct.fulfilled, (state, action: PayloadAction<string>) => {
+        state.pending = false; // Fixed: set to false
+        state.products = state.products.filter((p) => p.id !== action.payload); // Fixed: !== instead of ===
       })
-     .addCase(deleteProduct.rejected, (state, action) => {
-    state.pending = false;
-    state.error = action.payload as string;
-  });
-    },
+      .addCase(deleteProduct.rejected, (state, action) => {
+        state.pending = false;
+        state.error = action.payload as string;
+      });
+  },
 })
 
 export default productsSlice.reducer;

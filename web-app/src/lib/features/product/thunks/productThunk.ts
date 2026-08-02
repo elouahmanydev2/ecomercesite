@@ -2,9 +2,9 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { ProductType } from "@/types/productType";
 
-/* ===========================
+/* ==========================================
    CREATE PRODUCT
-=========================== */
+========================================== */
 
 export const createProduct = createAsyncThunk<
   ProductType,
@@ -20,19 +20,31 @@ export const createProduct = createAsyncThunk<
       );
 
       return data;
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.error ||
-          error.response?.data?.errors ||
-          "Failed to create product"
-      );
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+
+        if (responseData?.errors) {
+          return rejectWithValue(
+            typeof responseData.errors === "string"
+              ? responseData.errors
+              : JSON.stringify(responseData.errors, null, 2)
+          );
+        }
+
+        if (responseData?.error) {
+          return rejectWithValue(responseData.error);
+        }
+      }
+
+      return rejectWithValue("Failed to create product");
     }
   }
 );
 
-/* ===========================
+/* ==========================================
    FETCH ONE PRODUCT
-=========================== */
+========================================== */
 
 export const fetchProduct = createAsyncThunk<
   ProductType,
@@ -47,18 +59,22 @@ export const fetchProduct = createAsyncThunk<
       );
 
       return data;
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.error ||
-          "Failed to fetch product"
-      );
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(
+          error.response?.data?.error ||
+            "Failed to fetch product"
+        );
+      }
+
+      return rejectWithValue("Failed to fetch product");
     }
   }
 );
 
-/* ===========================
+/* ==========================================
    UPDATE PRODUCT
-=========================== */
+========================================== */
 
 export const updateProduct = createAsyncThunk<
   ProductType,
@@ -77,19 +93,32 @@ export const updateProduct = createAsyncThunk<
       );
 
       return data;
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.error ||
-          error.response?.data?.errors ||
-          "Failed to update product"
-      );
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+
+        if (responseData?.errors) {
+          return rejectWithValue(
+            typeof responseData.errors === "string"
+              ? responseData.errors
+              : JSON.stringify(responseData.errors, null, 2)
+          );
+        }
+
+        return rejectWithValue(
+          responseData?.error ||
+            "Failed to update product"
+        );
+      }
+
+      return rejectWithValue("Failed to update product");
     }
   }
 );
 
-/* ===========================
+/* ==========================================
    DELETE PRODUCT
-=========================== */
+========================================== */
 
 export const deleteProduct = createAsyncThunk<
   string,
@@ -102,10 +131,36 @@ export const deleteProduct = createAsyncThunk<
       await axios.delete(`/api/products/${id}`);
 
       return id;
-    } catch (error: any) {
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(
+          error.response?.data?.error ||
+            "Failed to delete product"
+        );
+      }
+
+      return rejectWithValue("Failed to delete product");
+    }
+  }
+);
+
+// Delete Assest
+export const deleteAsset = createAsyncThunk<
+  void,
+  string,
+  { rejectValue: string }
+>(
+  "upload/deleteAsset",
+  async (imageUrl, { rejectWithValue }) => {
+    try {
+      await axios.delete("/api/cdn/delete", {
+        data: {
+          imageUrl,
+        },
+      });
+    } catch (error) {
       return rejectWithValue(
-        error.response?.data?.error ||
-          "Failed to delete product"
+        "Failed to delete image."
       );
     }
   }
