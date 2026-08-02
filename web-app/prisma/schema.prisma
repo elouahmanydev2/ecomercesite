@@ -13,18 +13,20 @@ datasource db {
 }
 
 model Product {
-  id        String   @id @default(cuid())
-  name   String
-  images String[]      
-  thumbnail Int @default(0)
-  price  Float        
-  sales  Int    
-  stock Int      
-  status ProductStatus @default(Draft)
-  updatedAt DateTime @default(now())
-  createdAt DateTime @default(now())
+  id        String        @id @default(cuid())
+  name      String
+  images    String[]      
+  thumbnail Int           @default(0)
+  price     Float        
+  sales     Int          
+  stock     Int          
+  status    ProductStatus @default(Draft)
+  updatedAt DateTime      @default(now())
+  createdAt DateTime      @default(now())
 
- orderItems  OrderItem[]
+  options   ProductOption[]
+  variants  ProductVariant[]
+  orderItems OrderItem[]
 
   @@map("products")
 }
@@ -47,6 +49,62 @@ model Order {
   @@map("orders")
 }
 
+//----------------------------
+//PRODUCT OPTIONS
+//----------------------------
+model ProductOption {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  name      String   // e.g. "Size", "Color"
+  values    String[] // e.g. ["Small", "Medium", "Large"] or ["Red", "Blue"]
+
+  @@map("product_options")
+}
+
+//---------------------------
+//PRODUCT VARIANTS
+//---------------------------
+model ProductVariant {
+  id         String      @id @default(cuid())
+  productId  String
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  title      String      // e.g. "Medium / Blue"
+  sku        String?     @unique
+  price      Float?      // Optional price override if different from base product
+  stock      Int         @default(0)
+  
+  // Flexible key-value pairs matching option values, e.g.: { "Size": "M", "Color": "Blue" }
+  options    Json
+
+  orderItems OrderItem[]
+
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@map("product_variants")
+}
+
+
+model OrderItem {
+  id         String          @id @default(cuid())
+  priceCents Int             // snapshot price at time of purchase
+  quantity   Int             @default(1)
+
+  orderId    String
+  order      Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId  String
+  product    Product         @relation(fields: [productId], references: [id],onDelete:Cascade)
+
+  variantId  String?
+  variant    ProductVariant? @relation(fields: [variantId], references: [id])
+
+  @@map("order_items")
+}
+
 enum ProductStatus {
   Active
   Draft
@@ -57,18 +115,4 @@ enum OrderStatus {
   DELIVERED
   PAID
   CANCELLED
-}
-
-model OrderItem {
-  id         String  @id @default(cuid())
-  priceCents Int     // snapshot price at time of purchase
-  quantity   Int     @default(1)
-
-  orderId    String
-  order      Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-  productId  String
-  product    Product @relation(fields: [productId], references: [id])
-
-  @@map("order_items")
 }

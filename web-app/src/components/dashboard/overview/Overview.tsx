@@ -5,9 +5,7 @@ import Link from "next/link";
 import StatCard from "../global/StatCard";
 import OrderItem from "../orders/OrderItem";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
-import { useEffect, useMemo } from "react";
-import { fetchOrders } from "@/lib/features/orders/thunks/ordersThunks";
-import { OrderStatus } from "@/generated/prisma/enums";
+import { useEffect} from "react";
 import { fetchDashboard } from "@/lib/features/dashboard/thunks/dashboardThunks";
 
 export default function Overview() {

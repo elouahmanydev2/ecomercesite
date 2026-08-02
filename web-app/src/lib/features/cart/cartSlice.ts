@@ -4,9 +4,12 @@ import { RootState } from "@/lib/store";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type CartItem = {
-  id: string;
+  id: string;             // Unique cart line item ID (e.g., productId + variantId)
+  productId: string;
+  variantId?: string;
   name: string;
-  price: number;       // in dollars
+  variantTitle?: string;  // e.g. "Medium / Blue"
+  price: number;
   image: string | null;
   quantity: number;
   stock: number;

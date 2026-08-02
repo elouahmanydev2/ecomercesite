@@ -10,6 +10,7 @@ export async function GET() {
         items: {
           include: {
             product: true,
+            variant: true, // Included variant details
           },
         },
       },
@@ -18,10 +19,9 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(orders);
+    return NextResponse.json(orders, { status: 200 });
   } catch (error) {
-    console.error(error);
-
+    console.error("Fetch orders error:", error);
     return NextResponse.json(
       { error: "Failed to fetch orders." },
       { status: 500 }
@@ -32,7 +32,6 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-
     const parsed = OrderSchema.safeParse(body);
 
     if (!parsed.success) {
@@ -48,26 +47,41 @@ export async function POST(req: NextRequest) {
     const data = parsed.data;
 
     const order = await prisma.$transaction(async (tx) => {
-      // Validate stock
+      // 1. Validate Stock (Product or Variant level)
       for (const item of data.items) {
-        const product = await tx.product.findUnique({
-          where: {
-            id: item.productId,
-          },
-        });
+        if (item.variantId) {
+          const variant = await tx.productVariant.findUnique({
+            where: { id: item.variantId },
+            include: { product: true },
+          });
 
-        if (!product) {
-          throw new Error(`Product ${item.productId} not found.`);
-        }
+          if (!variant) {
+            throw new Error(`Variant ${item.variantId} not found.`);
+          }
 
-        if (product.stock < item.quantity) {
-          throw new Error(
-            `${product.name} only has ${product.stock} item(s) left.`
-          );
+          if (variant.stock < item.quantity) {
+            throw new Error(
+              `${variant.product.name} (${variant.title}) only has ${variant.stock} item(s) left.`
+            );
+          }
+        } else {
+          const product = await tx.product.findUnique({
+            where: { id: item.productId },
+          });
+
+          if (!product) {
+            throw new Error(`Product ${item.productId} not found.`);
+          }
+
+          if (product.stock < item.quantity) {
+            throw new Error(
+              `${product.name} only has ${product.stock} item(s) left.`
+            );
+          }
         }
       }
 
-      // Create order
+      // 2. Create the Order header
       const createdOrder = await tx.order.create({
         data: {
           customer: data.customer,
@@ -80,25 +94,44 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // Create items + update products
+      // 3. Create items + update stock/sales
       for (const item of data.items) {
         await tx.orderItem.create({
           data: {
             orderId: createdOrder.id,
             productId: item.productId,
+            variantId: item.variantId ?? null,
             quantity: item.quantity,
             priceCents: item.priceCents,
           },
         });
 
-        await tx.product.update({
-          where: {
-            id: item.productId,
-          },
-          data: {
-            stock: {
-              decrement: item.quantity,
+        // Deduct variant stock if variant exists
+        if (item.variantId) {
+          await tx.productVariant.update({
+            where: { id: item.variantId },
+            data: {
+              stock: {
+                decrement: item.quantity,
+              },
             },
+          });
+        } else {
+          // Fallback to product stock deduction
+          await tx.product.update({
+            where: { id: item.productId },
+            data: {
+              stock: {
+                decrement: item.quantity,
+              },
+            },
+          });
+        }
+
+        // Always increment overall product sales
+        await tx.product.update({
+          where: { id: item.productId },
+          data: {
             sales: {
               increment: item.quantity,
             },
@@ -106,14 +139,14 @@ export async function POST(req: NextRequest) {
         });
       }
 
+      // 4. Return complete created order
       return tx.order.findUnique({
-        where: {
-          id: createdOrder.id,
-        },
+        where: { id: createdOrder.id },
         include: {
           items: {
             include: {
               product: true,
+              variant: true,
             },
           },
         },
@@ -122,7 +155,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(order, { status: 201 });
   } catch (error) {
-    console.error(error);
+    console.error("Order creation error:", error);
 
     return NextResponse.json(
       {
