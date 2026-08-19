@@ -9,7 +9,7 @@ import TrafficSources from "@/components/dashboard/analytics/TrafficSources";
 import StatCard from "@/components/dashboard/global/StatCard";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 import { TRAFFIC } from "@/lib/utils/constants";
-import { fetchAnalyticsData } from "@/lib/features/dashboard/analytics/thunks/analyticsThunks";
+import { fetchAnalyticsData } from "@/lib/store/features/dashboard/analytics/thunks/analyticsThunks";
 
 export default function AnalyticsContent() {
   const dispatch = useAppDispatch();

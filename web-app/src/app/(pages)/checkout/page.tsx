@@ -5,8 +5,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
-import { clearCart, selectCartItems, selectCartTotal } from "@/lib/features/cart/cartSlice";
-import { createOrder } from "@/lib/features/orders/thunks/ordersThunks";
+import { clearCart, selectCartItems, selectCartTotal } from "@/lib/store/features/cart/cartSlice";
+import { createOrder } from "@/lib/store/features/dashboard/orders/thunks/ordersThunks";
 
 
 function formatPrice(price: number) {
@@ -20,12 +20,11 @@ type Step = "form" | "submitting" | "success";
 
 export default function CheckoutPage() {
   const dispatch = useAppDispatch();
-  const router = useRouter();
   const items = useAppSelector(selectCartItems);
   const total = useAppSelector(selectCartTotal);
 
   const [step, setStep] = useState<Step>("form");
-  const {loading,error} = useAppSelector(s=>s.dashboard.orders)
+  const { loading, error } = useAppSelector(s => s.dashboard.orders)
 
   // ── Empty cart guard ──────────────────────────────────────────────────────
   if (items.length === 0 && step !== "success") {
@@ -87,6 +86,7 @@ export default function CheckoutPage() {
           status: "PENDING",
           items: items.map((i) => ({
             productId: i.id,
+            variantId:i.variantId,
             quantity: i.quantity,
             priceCents: Math.round(i.price * 100),
           })),
@@ -260,8 +260,12 @@ export default function CheckoutPage() {
 
                     <div className="flex flex-1 justify-between gap-2 min-w-0">
                       <div className="min-w-0">
-                        <p className="truncate text-xs font-medium text-white">{item.name}</p>
-                        <p className="text-[11px] text-white/35">qty {item.quantity}</p>
+                        <div className="flex flex-col items-start">
+                          <p className="truncate text-sm font-medium text-white">{item.name}</p>
+                          {item.variantTitle && (
+                            <p className="text-xs text-white/40 truncate">{item.variantTitle}</p>
+                          )}
+                        </div>                        <p className="text-[11px] text-white/35">qty {item.quantity}</p>
                       </div>
                       <p className="shrink-0 text-xs font-semibold text-white">
                         {formatPrice(item.price * item.quantity)}

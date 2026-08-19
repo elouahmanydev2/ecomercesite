@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { OrderStatus } from "@/generated/prisma/enums";
 import { useAppDispatch } from "@/hooks/hooks";
-import { updateOrder } from "@/lib/features/orders/thunks/ordersThunks";
+import { updateOrder } from "@/lib/store/features/dashboard/orders/thunks/ordersThunks";
 import { OrderItemType } from "@/types/orderType";
 
 interface Props {
@@ -47,7 +47,7 @@ export default function EditOrderDrawer({
   }
   useEffect(() => {
     if (open) {
-      setStatus(currentStatus);
+      setStatus(currentStatus);      
     }
   }, [open, currentStatus]);
   if (!open) return null;
@@ -129,6 +129,12 @@ export default function EditOrderDrawer({
                   <h3 className="font-semibold text-white">
                     {item.product?.name}
                   </h3>
+                   <div className="flex flex-col items-start">
+                          <p className="truncate text-sm font-medium text-white">{item.product?.name}</p>
+                          {item.variant && (
+                            <p className="text-xs text-white/40 truncate">{`${item.variant.title}`}</p>
+                          )}
+                        </div>  
 
                   <p className="mt-1 text-xs text-white/40">
                     Unit Price

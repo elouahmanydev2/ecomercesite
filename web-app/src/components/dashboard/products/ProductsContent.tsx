@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import ProductItem from "./ProductItem";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
-import { fetchProducts } from "@/lib/features/products/thunks/productsThunks";
+import { fetchProducts } from "@/lib/store/features/dashboard/products/thunks/productsThunks";
 import Link from "next/link";
 
 
@@ -12,7 +12,7 @@ import Link from "next/link";
 export default function ProductsContent() {
   const [filter, setFilter] = useState("All");
   const dispatch = useAppDispatch();
-  const { products, pending, error } = useAppSelector((state) => state.products);
+  const { products, pending, error } = useAppSelector((state) => state.dashboard.products);
 
   useEffect(() => {
     dispatch(fetchProducts());

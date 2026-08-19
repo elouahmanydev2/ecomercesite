@@ -2,26 +2,35 @@
 "use client";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
-import { addItem, selectItemById } from "@/lib/features/cart/cartSlice";
+import { addItem, selectItemById } from "@/lib/store/features/cart/cartSlice";
 import { ProductType } from "@/types/productType";
 import { useState } from "react";
 
 type Props = {
   product: ProductType;
   selectedVariant?: {
-    id: string;
-    title: string;
+    id?: string;
+    title?: string;
     price?: number | null;
     stock: number;
-  };
+    options?: Record<string, string>;
+  } | null;
+  selectedOptions?: Record<string, string>;
+  disabled?: boolean;
 };
 
-export default function AddToCartButton({ product, selectedVariant }: Props) {
+export default function AddToCartButton({
+  product,
+  selectedVariant,
+  selectedOptions,
+  disabled = false,
+}: Props) {
   const dispatch = useAppDispatch();
 
-  // 1. Determine unique cart Item ID (combine product ID + variant ID if available)
+  // 1. Determine unique cart Item ID (combine product ID + variant ID or options hash)
   const productId = product.id as string;
-  const cartItemId = selectedVariant ? `${productId}-${selectedVariant.id}` : productId;
+  const variantId = selectedVariant?.id;
+  const cartItemId = variantId ? `${productId}-${variantId}` : productId;
 
   const cartItem = useAppSelector(selectItemById(cartItemId));
   const [added, setAdded] = useState(false);
@@ -30,17 +39,27 @@ export default function AddToCartButton({ product, selectedVariant }: Props) {
   const effectiveStock = selectedVariant ? selectedVariant.stock : product.stock;
   const effectivePrice = selectedVariant?.price ?? product.price;
 
-  const isSoldOut = effectiveStock === 0;
+  const isSoldOut = effectiveStock === 0 || disabled;
   const isMaxed = cartItem ? cartItem.quantity >= effectiveStock : false;
   const image = product.images?.[product.thumbnail] ?? product.images?.[0] ?? null;
+
+  // Format dynamic variant title from selectedOptions (e.g. "Size: L / Color: Black")
+  const variantTitle =
+    selectedVariant?.title ||
+    (selectedOptions
+      ? Object.entries(selectedOptions)
+          .map(([k, v]) => `${k}: ${v}`)
+          .join(" / ")
+      : undefined);
 
   function handleAdd() {
     dispatch(
       addItem({
-        id: cartItemId,              // Unique line-item ID for Redux
-        productId: productId,        // 👈 Explicit Product ID for backend orders
-        variantId: selectedVariant?.id,
-        variantTitle: selectedVariant?.title,
+        id: cartItemId, // Unique line-item ID for Redux
+        productId: productId, // Explicit Product ID for backend orders
+        variantId: variantId,
+        variantTitle: variantTitle,
+        selectedOptions: selectedOptions,
         name: product.name,
         price: effectivePrice,
         stock: effectiveStock,

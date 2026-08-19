@@ -1,12 +1,8 @@
 // src/app/products/page.tsx
-// Public product listing — shows all ACTIVE products.
-// Fetches directly from DB (Server Component).
-
 'use client'
 import { Navbar } from "@/components/global/Navbar";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
-import { fetchProducts } from "@/lib/features/products/thunks/productsThunks";
-import prisma from "@/lib/prisma";
+import { fetchProducts } from "@/lib/store/features/dashboard/products/thunks/productsThunks";
 import Link from "next/link";
 import { useEffect } from "react";
 
@@ -21,7 +17,7 @@ function formatPrice(price: number) {
 
 export default function ProductsPage() {
     const dispatch = useAppDispatch()
-  const {products,pending} = useAppSelector(s=>s.products)
+  const {products,pending} = useAppSelector(s=>s.dashboard.products)
 
   useEffect(()=>{
     dispatch(fetchProducts())

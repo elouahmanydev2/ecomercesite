@@ -4,7 +4,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { OrderStatus } from "@/generated/prisma/enums";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
-import { fetchOrders } from "@/lib/features/orders/thunks/ordersThunks";
+import { fetchOrders } from "@/lib/store/features/dashboard/orders/thunks/ordersThunks";
 import OrderItem from "@/components/dashboard/orders/OrderItem";
 import EditOrderDrawer from "./EditOrderDrawer";
 import { OrderType } from "@/types/orderType";
@@ -20,6 +20,7 @@ export default function OrdersContent() {
 
   useEffect(() => {
     dispatch(fetchOrders());
+    
   }, [dispatch]);
 
   const filtered = useMemo(() => {

@@ -10,7 +10,7 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "@/hooks/hooks";
-import { createProduct } from "@/lib/features/product/thunks/productThunk";
+import { createProduct } from "@/lib/store/features/dashboard/product/thunks/productThunk";
 import { inputClass, labelClass } from "@/lib/styles/Styles";
 import { ProductVariantType } from "@/types/productType";
 import { useState } from "react";
@@ -31,7 +31,7 @@ export default function AddNewProduct() {
   const {
     error: reduxError,
     loading,
-  } = useAppSelector((state) => state.product);
+  } = useAppSelector((state) => state.dashboard.product);
 
   // ==========================================
   // PRODUCT STATE

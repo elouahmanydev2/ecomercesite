@@ -6,7 +6,7 @@ import StatCard from "../global/StatCard";
 import OrderItem from "../orders/OrderItem";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 import { useEffect} from "react";
-import { fetchDashboard } from "@/lib/features/dashboard/thunks/dashboardThunks";
+import { fetchDashboard } from "@/lib/store/features/dashboard/thunks/dashboardThunks";
 
 export default function Overview() {
 

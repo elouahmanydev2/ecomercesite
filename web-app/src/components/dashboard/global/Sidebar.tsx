@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { NavSideItem } from "./NavSideItem";
-import { fetchNewOrderCount } from "@/lib/features/dashboard/sidebar/sideBarSlice";
+import { fetchNewOrderCount } from "@/lib/store/features/dashboard/sidebar/sideBarSlice";
 
 const NAV = [
   { label: "Overview", href: "/dashboard", icon: HomeIcon },

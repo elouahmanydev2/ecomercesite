@@ -1,7 +1,7 @@
 import { ProductStatus } from "@/generated/prisma/enums";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
-import { resetProductStatus } from "@/lib/features/product/productSlice";
-import { createProduct } from "@/lib/features/product/thunks/productThunk";
+import { resetProductStatus } from "@/lib/store/features/dashboard/product/productSlice";
+import { createProduct } from "@/lib/store/features/dashboard/product/thunks/productThunk";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 

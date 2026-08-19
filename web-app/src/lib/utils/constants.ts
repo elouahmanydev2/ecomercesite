@@ -1,7 +1,6 @@
 // ─── Recent Orders ────────────────────────────────────────────────────────────
 
-import { OrderStatus } from "@/generated/prisma/enums";
-import { rangeDataType } from "@/types/orderType";
+import { OrderStatus, Roles } from "@/generated/prisma/enums";
 
 export const ALL_ORDERS = [
   { id: "#1042", customer: "Alex M.",   email: "alex@example.com",   product: "Design Preset Pack",     amount: "$29", status: "Paid",     date: "Jun 24" },
@@ -97,6 +96,19 @@ export const REVENUE_90D = [
   { date: "Jun",  revenue: 2061, orders: 69 },
 ];
 
-export const RANGE_DATA:Record<string,rangeDataType[]> = { "7D": REVENUE_7D, "30D": REVENUE_30D, "90D": REVENUE_90D };
+export const NAV_LINKS = [
+  { label: "Shop", href: "/shop" },
+  { label: "Collections", href: "/collections" },
+  { label: "New Arrivals", href: "/new-arrivals" },
+  { label: "Best Sellers", href: "/best-sellers" },
+  { label: "About", href: "/about" },
+];
 
-export const NAV_LINKS = ["Features", "Pricing", "Testimonials", "Blog"];
+export const ROLE_COLORS: Record<Roles, string> = {
+  super_admin: "bg-purple-100 text-purple-700",
+  admin: "bg-blue-100 text-blue-700",
+  manager: "bg-indigo-100 text-indigo-700",
+  editor: "bg-green-100 text-green-700",
+  support: "bg-yellow-100 text-yellow-700",
+  user: "bg-gray-100 text-gray-600",
+};
