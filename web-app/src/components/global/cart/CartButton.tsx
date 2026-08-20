@@ -3,7 +3,7 @@
 "use client";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
-import { selectCartCount, toggleDrawer } from "@/lib/features/cart/cartSlice";
+import { selectCartCount, toggleDrawer } from "@/lib/store/features/cart/cartSlice";
 
 
 export default function CartButton() {

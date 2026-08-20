@@ -1,5 +1,6 @@
 import { OrderStatus } from "@/generated/prisma/enums";
 import { z } from "zod";
+import { ProductVariantSchema } from "./productType";
 
 
 export const OrderItemSchema = z.object({
@@ -18,6 +19,10 @@ export const OrderItemSchema = z.object({
       thumbnail: z.number(),
     })
     .optional(),
+    variant: z.object({
+        title: z.string()
+    }).optional(),
+
 });
 
 
@@ -31,6 +36,7 @@ export const OrderSchema = z.object({
   status: z.nativeEnum(OrderStatus).optional(),
   note: z.string().optional(),
   items: z.array(OrderItemSchema).min(1, "Order must contain at least one item"),
+  createdAt:z.date().optional()
 });
 
 export type OrderItemType = z.infer<typeof OrderItemSchema>;

@@ -10,7 +10,7 @@ import {
   removeItem,
   incrementItem,
   decrementItem,
-} from "@/lib/features/cart/cartSlice";
+} from "@/lib/store/features/cart/cartSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 
 function formatPrice(price: number) {
@@ -37,10 +37,10 @@ function TrashIcon() {
 }
 
 export default function CartDrawer() {
-  const dispatch  = useAppDispatch();
-  const items     = useAppSelector(selectCartItems);
-  const total     = useAppSelector(selectCartTotal);
-  const isOpen    = useAppSelector(selectIsDrawerOpen);
+  const dispatch = useAppDispatch();
+  const items = useAppSelector(selectCartItems);
+  const total = useAppSelector(selectCartTotal);
+  const isOpen = useAppSelector(selectIsDrawerOpen);
 
   return (
     <>
@@ -115,9 +115,13 @@ export default function CartDrawer() {
                 {/* Info */}
                 <div className="flex flex-1 flex-col justify-between min-w-0">
                   <div className="flex items-start justify-between gap-2">
-                    <p className="truncate text-sm font-medium text-white">
-                      {item.name}
-                    </p>
+                    <div className="flex flex-col items-start">
+                      <p className="truncate text-sm font-medium text-white">{item.name}</p>
+                      {item.variantTitle && (
+                        <p className="text-xs text-white/40 truncate">{item.variantTitle}</p>
+                      )}
+                    </div>
+
                     <button
                       onClick={() => dispatch(removeItem(item.id))}
                       className="shrink-0 text-white/25 hover:text-red-400 transition-colors"

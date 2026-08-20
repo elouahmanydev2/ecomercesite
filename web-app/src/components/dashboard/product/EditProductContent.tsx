@@ -5,7 +5,7 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "@/hooks/hooks";
-import { deleteAsset, deleteProduct, fetchProduct, updateProduct } from "@/lib/features/product/thunks/productThunk";
+import { deleteAsset, deleteProduct, fetchProduct, updateProduct } from "@/lib/store/features/dashboard/product/thunks/productThunk";
 import { ProductVariantType } from "@/types/productType";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -50,7 +50,7 @@ export default function EditProductContent({
     loading,
     error,
   } = useAppSelector(
-    (state) => state.product
+    (state) => state.dashboard.product
   );
 
   // ==========================================

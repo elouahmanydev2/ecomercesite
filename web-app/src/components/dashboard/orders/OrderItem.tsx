@@ -1,4 +1,5 @@
 // src/components/dashboard/orders/OrderItem.tsx
+import { OrderStatus } from "@/generated/prisma/enums";
 import { ORDER_STATUS_STYLE } from "@/lib/utils/constants";
 import { OrderType } from "@/types/orderType";
 
@@ -26,7 +27,7 @@ function formatAmount(amount: number) {
 
 export default function OrderItem({ order, onEdit }: OrderProps) {
   if (!order) return null;
-
+  
   return (
     <tr
       className="border-b border-white/5 hover:bg-white/2 transition-colors last:border-0"
@@ -60,7 +61,7 @@ export default function OrderItem({ order, onEdit }: OrderProps) {
       <td className="px-4 py-3">
         <span
           className={`inline-flex rounded-full border px-2 py-0.5 text-[11px] font-medium ${
-            ORDER_STATUS_STYLE[order.status] ??
+            ORDER_STATUS_STYLE[order.status as OrderStatus] ??
             "bg-white/5 text-white/40 border-white/10"
           }`}
         >
